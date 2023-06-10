@@ -45,4 +45,61 @@ router.get("/admin_logout",async(req,resp)=>{
 })
 
 
+
+router.get("/products", aauth, async(req,resp)=>{
+  try {
+    resp.render("products")
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+
+//**************************** Category ****************************
+const category = require("../models/categories")
+
+
+router.get("/category", aauth, async(req,resp)=>{
+  try {
+    const data = await category.find()
+    resp.render("category",{catdata:data})
+  } catch (error) 
+  {
+    console.log("admin.js category page ni error che",error);
+  }
+})
+
+
+router.post("/add_category", aauth,async(req,resp)=>{
+  try {
+    const cat = await category(req.body)
+     await cat.save();
+     resp.redirect("category")
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+//  ***************** PRODUCT *****************************
+
+router.get("/product", aauth,async(req,resp)=>{
+  try {
+    console.log("heloo product");
+    const data = await category.find()
+    console.log("123",data);
+    resp.render("products",{catdata:data})
+  } catch (error) {
+    console.log(error);
+  }
+})
+
+router.post("/add_product", aauth,async(req,resp)=>{
+  try {
+    const cat = await category(req.body)
+     await cat.save();
+     resp.redirect("category")
+  } catch (error) {
+    console.log("admin.js ma add category ni error",error);
+  }
+})
 module.exports = router

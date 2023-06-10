@@ -45,6 +45,6 @@ app.listen(port, ()=>{
 
 
 
-// vid 5 thi baaki, admin login bani gayu che, auth pan thai gayu che  
+// vid 8 , product ni detail add thai gai che , payment thi baaki che.
 
   

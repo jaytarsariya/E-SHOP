@@ -9,8 +9,9 @@ const auth = async(req,resp,next)=>{
       console.log("admin token:",mytoken);
       const verifytoken = await jwt.verify(mytoken,process.env.A_KEY)
 
-      console.log(verifytoken);
-      if(verifytoken){
+     
+      if(verifytoken)
+      {
         const admindata = await Admin.findOne({_id:verifytoken._id})
         req.Admin = admindata
         req.token = mytoken 

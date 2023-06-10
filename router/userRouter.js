@@ -1,5 +1,6 @@
 const router = require("express").Router()
 const auth = require("../middleware/auth")
+const category = require("../models/categories")
 
 
 
@@ -7,8 +8,9 @@ const auth = require("../middleware/auth")
 
 
 
-router.get("/",(req,resp)=>{
-  resp.render("index")
+router.get("/", async (req,resp)=>{
+  const data = await category.find()
+  resp.render("index",{catdata:data})
 })
 
 router.get("/shop",(req,resp)=>{
