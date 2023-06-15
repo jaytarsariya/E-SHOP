@@ -1,16 +1,18 @@
 const router = require("express").Router()
 const auth = require("../middleware/auth")
 const category = require("../models/categories")
+const product = require("../models/product")
 
 
 
 
 
-
+// ********** VIEW CATEGORY AND PRODUCT IN INDEX PAGE *********
 
 router.get("/", async (req,resp)=>{
   const data = await category.find()
-  resp.render("index",{catdata:data})
+  const prod = await product.find()
+  resp.render("index",{catdata:data,proddata:prod})
 })
 
 router.get("/shop",(req,resp)=>{
@@ -34,6 +36,20 @@ router.get("/registration",(req,resp)=>{
 })
 router.get("/login",(req,resp)=>{
   resp.render("login")
+})
+
+
+// ******************* index page par thi aveli req.***********
+router.get("/details",async (req,resp)=>{
+  const id = req.query.pid
+  try {
+    const prod = await product.findOne({_id:id})
+    console.log("detail na data",prod);
+    resp.render("detail",{productdata:prod})
+  } catch (error) {
+    console.log(error,"detail");
+  }
+  
 })
 
 

@@ -46,5 +46,9 @@ app.listen(port, ()=>{
 
 
 // vid 8 , product ni detail add thai gai che , payment thi baaki che.
+// vid 8,  multer image add karvani che practice saru che .
+// vid no 9 saru karvano che category nu name project ma add thai gyu che, kai rite thyu te jovanu che
+// vid no 9 puro thai gayo che , view detail ma name and image thai gyu che , hve product cart ma add karvani che ,  
+
 
   

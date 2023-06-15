@@ -2,6 +2,25 @@ const router = require("express").Router()
 const Admin = require("../models/admin")
 const jwt = require("jsonwebtoken")
 const aauth = require("../middleware/adminauth")
+const multer = require("multer")
+
+// ********************* multer ****************************
+const storage = multer.diskStorage(
+  {
+    destination: function(req,file,cb){
+         cb(null,"./public/product_img")
+    },
+    filename: function(req,file,cb){
+     cb(null,file.fieldname +"-"+ Date.now()+ ".jpg")
+    }
+  })
+ 
+     var upload= multer({
+      storage: storage 
+     })
+
+
+
 
 
 router.get("/dashboard",aauth,(req,resp)=>{
@@ -11,7 +30,7 @@ router.get("/Alogin",(req,resp)=>{
   resp.render("ad_login")
 })
 
-
+// ********************* admin login ****************************
 router.post("/do_adminlogin", async (req,resp)=>{
   try {
     const admin =await Admin.findOne({uname:req.body.uname})
@@ -32,7 +51,7 @@ router.post("/do_adminlogin", async (req,resp)=>{
      
 })
 
-//  ****************** LOGOUT *******************************
+//  ****************** Admin LOGOUT *******************************
 
 router.get("/admin_logout",async(req,resp)=>{
   try {
@@ -57,6 +76,7 @@ router.get("/products", aauth, async(req,resp)=>{
 
 //**************************** Category ****************************
 const category = require("../models/categories")
+const product = require("../models/product")
 
 
 router.get("/category", aauth, async(req,resp)=>{
@@ -81,25 +101,52 @@ router.post("/add_category", aauth,async(req,resp)=>{
 })
 
 //  ***************** PRODUCT *****************************
+const Product = require("../models/product")
+
 
 router.get("/product", aauth,async(req,resp)=>{
   try {
     console.log("heloo product");
     const data = await category.find()
-    console.log("123",data);
-    resp.render("products",{catdata:data})
+    const prod = await product.aggregate([{$lookup:{from:"categories",localField:"catid",foreignField:"_id",as:"category"}}])
+    // console.log(prod[0].category[0]);
+    // console.log("123",data);
+    resp.render("products",{catdata:data,proddata:prod})
   } catch (error) {
     console.log(error);
   }
 })
 
-router.post("/add_product", aauth,async(req,resp)=>{
+
+router.post("/add_product",upload.single("file"),async(req,resp)=>{
   try {
-    const cat = await category(req.body)
-     await cat.save();
-     resp.redirect("category")
+    const prod = new Product({
+      catid : req.body.catid, 
+      pname: req.body.pname,
+      price: req.body.price,
+      qty:  req.body.qty,
+      img: req.file.filename
+    }) 
+
+    await prod.save()
+    resp.redirect("product")
   } catch (error) {
-    console.log("admin.js ma add category ni error",error);
+    console.log("add_product", error);
   }
 })
+
+//  ******************* ALL USER DATA VIEW ON ADMIN SIDE *********
+
+const user = require("../models/user")
+
+router.get("/viewuser", async (req,resp)=>{
+  try {
+    const data = await user.find()
+    resp.render("users",{userdata:data})
+  } catch (error) {
+    console.log("viewuser",error);
+  }
+})
+
+
 module.exports = router
